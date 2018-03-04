@@ -53,7 +53,7 @@ void TLCMatrix::pwmCycle() {
   }
 }
 
-byte TLCMatrix::setBits(int start, int num) { //Start: Linksseitig
+byte TLCMatrix::setBits(int start, int num, bool data) { //Start: Linksseitig
   // byte output = B00000000;
   //
   // for (int i = 0; i < num; i++) {
@@ -62,16 +62,26 @@ byte TLCMatrix::setBits(int start, int num) { //Start: Linksseitig
   //
   // return output << start;
 
+  if (!data) {
+    return B00000000;
+  }
+
   return (2^num-1) << start; //schneller?
 }
 
 void TLCMatrix::setPixeldata(byte (*pixeldata)[8]) {
   byte nextByte = B00000000;
-  int usedBits = 0;
+  int usedNextBits = 0;
 
-  for (int i = 0; i < 64; i++) {
-    bool data = *pixeldata[i/8] & (1 << i%8); //Position im Array: x, Position im Byte: z
+  for (int i = 63; i >= 0; i--) {
+    bool data = *pixeldata[_MAP[i]/8] & (1 << _MAP[i]%8); //Position im Array: x, Position im Byte: z
 
+    if (usedBits == 8) {
+      spi_transfer(nextByte);
+      usedNextBits = 0;
+    }
+
+    spi_transfer(nextByte | setBits(0, 8-usedNextBits, data));
 
   }
 }
