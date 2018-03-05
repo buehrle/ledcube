@@ -13,13 +13,13 @@ class TLCMatrix {
 public:
   static void init();
   static void pwmCycle();
-  static void setPixeldata(byte (*pixeldata)[8]);
+  static void setPixeldata(byte (*pixeldata)[8], int led);
+  static void latch();
 private:
   TLCMatrix() {}
   static char spi_transfer(volatile char data);
   static void pulseGSCLK();
-  static byte setBits(int start, int num);
-  static int _MAP[64];
+  static byte setBits(int start, int num, bool data);
 };
 
 #endif

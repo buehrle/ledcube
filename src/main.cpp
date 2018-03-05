@@ -59,8 +59,9 @@ void loop() {
     layer = 0;
   }
 
+  TLCMatrix::setPixeldata(&voxeldata[layer], loopcounter/1024);
+  TLCMatrix::latch();
   TLCMatrix::pwmCycle();
-  //TLCMatrix::setPixeldata(&voxeldata[layer]);
 
   if (loopcounter == 65535) loopcounter = 0;
   loopcounter++;
