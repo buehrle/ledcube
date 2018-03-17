@@ -45,24 +45,34 @@ void setup() {
 
   for(int x = 0; x < 8; x++) {
     for(int y = 0; y < 8; y++) {
-      voxeldata[y][x] = B00000000;
+      voxeldata[y][x] = 0;
     }
   }
+
+  //Serial.begin(115200);
 }
 
 void loop() {
   PORTD = (PORTD & B10001111) | LAYERS[layer];
 
+  TLCMatrix::startGrayscaleCycle();
+
   if (layer < 7) {
     layer++;
   } else {
+    // for (int i = 0; i < 64; i++) {
+    //   while(!Serial.dataAvailable()){};
+    //   voxeldata[i/8][i%8] = Serial.read();
+    // }
+
     layer = 0;
   }
 
   TLCMatrix::setPixeldata(&voxeldata[layer], loopcounter/1024);
-  TLCMatrix::latch();
-  TLCMatrix::pwmCycle();
 
   if (loopcounter == 65535) loopcounter = 0;
   loopcounter++;
+
+  TLCMatrix::endGrayscaleCycle();
+  TLCMatrix::latch();
 }
